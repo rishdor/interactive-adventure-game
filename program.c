@@ -55,7 +55,6 @@ void start(Player *player){
     player->armor = 0;
     player->heal_potion = 0;
     player->attack_potion = 0;
-    player->heal_spell = 0;
     player->chapter = 0;
 
     chapter1(player);
@@ -107,9 +106,60 @@ void chapter1(Player *player) {
     chapter2(player);   
 }
 
-
 void chapter2(Player *player) {
-    printf("welcome to chapter 2 %s", player->name);
+    printf("As you and your team approach the endangered neighborhoods of Pyroklas, the air grows thick with smoke. The once vibrant streets are now deserted, save for the flickering shadows cast by the raging fires.\n");
+
+    printf("Suddenly, a deafening roar echoes through the air, sending a chill down your spine. You turn to see a massive dragon, its scales glistening in the firelight, looming over the city. Its eyes, glowing with an eerie light, meet yours, and for a moment, time seems to stand still.\n");
+
+    printf("Lyla grips her bow tightly, her eyes never leaving the dragon. Magnus, despite his earlier bravado, seems taken aback by the sight of the beast.\n");
+
+    printf("On the ground, you find a scroll with a riddle: 'I fly without wings, I cry without eyes. Wherever I go, darkness follows me. What am I?'\n");
+
+    printf("1: A cloud\n");
+    printf("2: The wind\n");
+
+    int choice;
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("Correct! The scroll glows and a spell to banish the dragon appears. You gain 10 XP and a spell to banish the dragon.\n");
+        player->xp += 10;
+        printf("You used the spell and the dragon vanished.");
+    } else {
+        printf("Incorrect! The dragon roars and attacks. You must fight the dragon.\n");
+        //fight method
+    }
+
+    printf("After the battle, you find a weird colored potion. Do you pick it up? (be careful, it might be poison)\n");
+    printf("1: Yes\n");
+    printf("2: No\n");
+
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        // randomize this later (get the healing potion, the poison, or just water)
+        printf("You picked up the healing potion.\n");
+        player->heal_potion++;
+    }
+
+    printf("As you continue your journey, you encounter an short grumpy man who tells you a legend about the Emberlord. During his story, you hear a noise. It's probably a piece of ruined building that fell.\n");
+    printf("1: Follow the noise\n");
+    printf("2: Stay and listen to the rest of the story\n");
+
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("You follow the noise and find a old woman trapped under some rubble. You manage to save her and as a thank you she gives you a healing potion.\n");
+        player->heal_potion++;
+    } else {
+        printf("You decide to stay and listen to the rest of the story. Unfortunately, there was nothing important left to hear.\n");
+    }
+
+    printf("Your journey continues...\n");
+
+    player->chapter++;
+    saveGame(player, "savegame.txt");
+
     chapter3(player);
 }
 
