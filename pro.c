@@ -11,7 +11,7 @@ typedef struct {
     int armor;
     int heal_potion;
     int attack_potion;
-    // int heal_spell;
+    int heal_spell;
     int chapter;
 } Player;
 
@@ -24,7 +24,6 @@ void chapter4(Player *player);
 void chapter5(Player *player);
 void loadGame(const char *filepath, Player *player);
 void saveGame(Player *player, const char *filepath);
-int duel(Player *player);
 
 int main() {
     Player player;
@@ -56,6 +55,7 @@ void start(Player *player){
     player->armor = 0;
     player->heal_potion = 0;
     player->attack_potion = 0;
+    player->heal_spell = 0;
     player->chapter = 0;
 
     chapter1(player);
@@ -128,12 +128,21 @@ void chapter2(Player *player) {
         printf("You used the spell and the dragon vanished.");
     } else {
         printf("Incorrect! The dragon roars and attacks. You must fight the dragon.\n");
-        if (duel(player)) {
-            printf("You defeated the dragon! You gain 20 XP. \n");
-            player->xp += 20;
-            player->heal_potion++;
+        int dragon_hp = 50;
+        while (dragon_hp > 0 && player->hp > 0) {
+            int damage = rand() % 20;
+            dragon_hp -= damage;
+            printf("You deal %d damage to the dragon. It has %d HP left.\n", damage, dragon_hp);
+            if (dragon_hp > 0) {
+                damage = rand() % 20;
+                player->hp -= damage;
+                printf("The dragon deals %d damage to you. You have %d HP left.\n", damage, player->hp);
+            }
+        }
+        if (player->hp > 0) {
+            printf("You defeated the dragon!\n");
         } else {
-            printf("You were defeated by the dragon. Game over.\n");
+            printf("You were defeated by the dragon...\n");
             return;
         }
     }
@@ -145,20 +154,19 @@ void chapter2(Player *player) {
     scanf("%d", &choice);
 
     if (choice == 1) {
-        // randomize this later (get the healing potion, the poison, or just water)
         printf("You picked up the healing potion.\n");
-        player->heal_potion++;
+        player->heal_potion = 1;
     }
 
-    printf("As you continue your journey, you encounter an short grumpy man who tells you a legend about the Emberlord. During his story, you hear a noise. It's probably a piece of ruined building that fell.\n");
+    printf("As you continue your journey, you encounter an short grumoy man who tells you a legend about the Emberlord. During his story, you hear a noise. It's probably a piece of ruined building that fell.\n");
     printf("1: Follow the noise\n");
     printf("2: Stay and listen to the rest of the story\n");
 
     scanf("%d", &choice);
 
     if (choice == 1) {
-        printf("You follow the noise and find a old woman trapped under some rubble. You manage to save her and as a thank you she gives you a healing potion.\n");
-        player->heal_potion++;
+        printf("You follow the noise and find a old woman trapped under some rubble. You manage to save her and as you leave, you think you hear a whisper. But that's probably just the wind playing tricks on you\n");
+        player->heal_spell = 1;
     } else {
         printf("You decide to stay and listen to the rest of the story. Unfortunately, there was nothing important left to hear.\n");
     }
@@ -183,30 +191,6 @@ void chapter5(Player *player) {
 
 }
 
-int duel(Player *player) {
-    int dragon_hp = 100;
-    int round_damage;
-    while (dragon_hp > 0 && player->hp > 0) {
-        int player_choice;
-        printf("Choose your attack power (1-12): ");
-        scanf("%d", &player_choice); // player inputs a number from 1-12
-        round_damage = (player_choice / player->chapter ) * 2; // multiply by chapter and divide by 2
-        round_damage += rand() % 10 - 5; // add a random number between -5 and 5
-        round_damage += player->xp / 10; // add a value influenced by the player's xp
-        dragon_hp -= round_damage;
-        printf("You deal %d damage to the dragon. It has %d HP left.\n", round_damage, dragon_hp);
-        if (dragon_hp > 0) {
-            round_damage = rand() % (player->chapter * 10);
-            player->hp -= round_damage;
-            printf("The dragon deals %d damage to you. You have %d HP left.\n", round_damage, player->hp);
-        }
-    }
-    if (player->hp > 0) {
-        return 1;
-    } 
-    return 0;
-}
-
 void saveGame(Player *player, const char *filepath) {
     FILE *file = fopen("C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt", "w");
     if (file == NULL) {
@@ -223,7 +207,7 @@ void saveGame(Player *player, const char *filepath) {
     fprintf(file, "armor: %d\n", player->armor);
     fprintf(file, "heal_potion: %d\n", player->heal_potion);
     fprintf(file, "attack_potion: %d\n", player->attack_potion);
-    // fprintf(file, "heal_spell: %d\n", player->heal_spell);
+    fprintf(file, "heal_spell: %d\n", player->heal_spell);
     fprintf(file, "chapter: %d\n", player->chapter);
 
     fclose(file);
@@ -259,8 +243,8 @@ void loadGame(const char *filepath, Player *player) {
     sscanf(line, "heal_potion: %d", &player->heal_potion);
     fgets(line, sizeof(line), file);
     sscanf(line, "attack_potion: %d", &player->attack_potion);
-    // fgets(line, sizeof(line), file);
-    // sscanf(line, "heal_spell: %d", &player->heal_spell);
+    fgets(line, sizeof(line), file);
+    sscanf(line, "heal_spell: %d", &player->heal_spell);
     fgets(line, sizeof(line), file);
     sscanf(line, "chapter: %d", &player->chapter);
 
