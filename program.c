@@ -240,9 +240,51 @@ void chapter3(Player *player) {
     }
 }
 
-
 void chapter4(Player *player) {
+    printf("You reunite with your third team member. The three of you stand together, ready to face whatever comes next.\n");
 
+    printf("On the ground, you find another scroll with a riddle: 'I am taken from a mine, and shut up in a wooden case, from which I am never released, and yet I am used by almost every person. What am I?'\n");
+
+    printf("1: A pencil\n");
+    printf("2: A diamond\n");
+
+    int choice;
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("Correct! The scroll glows and you gain 10 XP. It also reveals a piece of information about the Emberlord: 'The Emberlord's scales are impenetrable, save for one weak spot right beneath its left wing.'\n");
+        player->xp += 10;
+    } else {
+        printf("Incorrect! Nothing happens.\n");
+    }
+
+    printf("A duel ensues with a dragon. After the duel, you notice a burning building on the verge of collapsing.\n");
+
+    printf("Do you go into the building? There might be somone there. Are you willing to risk your life\n");
+    printf("1: Yes\n");
+    printf("2: No\n");
+
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        // randomize this later (50% chance of dying)
+        printf("You decide to risk it and go into the building. You manage to save a puppy just in time. A freckled ginger boy comes up to you and recites a poem:\n");
+        printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
+        printf("A hero emerges, their praises we sing.\n");
+        printf("With courage in their heart and a spear in their hand,\n");
+        printf("They strike at the beast, making their stand.\n");
+        printf("The spear finds its mark, the dragon's reign ends,\n");
+        printf("In the heart of the fire, a new era begins.\n```\n");
+    } else {
+        printf("You decide not to risk it and stay away from the building.\n");
+    }
+
+    printf("Your journey continues...\n");
+
+    player->chapter++;
+    saveGame(player, "savegame.txt");
+
+    chapter5(player);
 }
 
 void chapter5(Player *player) {
