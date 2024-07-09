@@ -288,7 +288,58 @@ void chapter4(Player *player) {
 }
 
 void chapter5(Player *player) {
+    printf("You arrive at the foot of the volcano, the alleged lair of the Emberlord. The air is thick with smoke and the ground trembles beneath your feet.\n");
 
+    printf("You have to choose your weapon:\n");
+    printf("1: Sword\n");
+    printf("2: Bow\n");
+    printf("3: Spear\n");
+
+    int choice;
+    scanf("%d", &choice);
+    player->weapon = choice;
+
+    printf("You also have to choose your armor:\n");
+    printf("1: Dragon Scale Armor\n");
+    printf("2: Iron Plate Armor \n");
+    printf("3: Shadow Cloak\n");
+
+    scanf("%d", &choice);
+    player->armor = choice;
+
+    printf("With your chosen weapon and armor, you and your team ascend the volcano and confront the Emberlord. The battle begins.\n");
+
+    printf("During the battle, you get badly injured.\n");
+    if (player->heal_potion > 0) {
+        printf("You use a healing potion and recover your HP.\n");
+        player->hp += 10;
+        player->heal_potion--;
+    } else if (player->partner == 1) {
+        printf("Your partner Lyla gives you her potion and you are saved.\n");
+        player->hp += 10;
+    } else {
+        printf("Your partner Magnus convinces Lyla that they can't save you and they need to head back to the HQ and regroup. You die. Game over.\n");
+        return;
+    }
+
+    if (player->hp > 0) {
+        printf("You find yourself face to face with the giant dragon. You feel its breath on your face, and the heat from its body. You stare into its eyes and notice something. You get a weird lump in your stomach but there is no explanation for it.\n");
+
+        printf("You reach your hand out ant touch the dragons face.\n");
+        printf("1: Stab the dragon\n");
+        printf("2: Don't stab the dragon\n");
+
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
+        } else {
+            printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way. But either way, you're a hero.\n");
+        }
+    }
+
+    player->chapter++;
+    saveGame(player, "savegame.txt");
 }
 
 int duel(Player *player) {
