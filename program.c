@@ -131,7 +131,6 @@ void chapter2(Player *player) {
         if (duel(player)) {
             printf("You defeated the dragon! You gain 20 XP. \n");
             player->xp += 20;
-            player->heal_potion++;
         } else {
             printf("You were defeated by the dragon. Game over.\n");
             return;
@@ -172,8 +171,75 @@ void chapter2(Player *player) {
 }
 
 void chapter3(Player *player) {
-    printf("welcome to chapter 3 %s", player->name);
+    printf("The team member you didn't choose to pair up with decides to check something out, leaving you with your partner.\n");
+
+    printf("On the ground, you find another scroll with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?'\n");
+
+    printf("1: An echo\n");
+    printf("2: A shadow\n");
+
+    int choice;
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("Correct! The scroll glows and you gain 20 XP.\n");
+        player->xp += 10;
+    } else {
+        printf("Incorrect! Nothing happens.\n");
+    }
+
+    printf("Suddenly, a duel ensues.");
+
+    duel(player);
+    
+    printf("After the duel, a shiny object falls to the ground.\n");
+
+    printf("Do you pick it up?\n");
+    printf("1: Yes\n");
+    printf("2: No\n");
+
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("You picked up the object, but it's cursed! You start rapidly losing HP.\n");
+        player->hp -= 10;
+        if (player->heal_potion > 0) {
+            printf("You use a healing potion and recover your HP.\n");
+            player->hp += 10;
+            player->heal_potion--;
+        } else if (player->partner == 1) {
+            printf("Your partner Lyla gives you her potion and you are saved.\n");
+            player->hp += 10;
+        } else {
+            printf("Your partner Magnus betrays you and runs away. You die. Game over.\n");
+            return;
+        }
+    } else {
+        printf("You didn't pick up the object. It explodes, but you dodge the bullet.\n");
+    }
+
+    if (player->hp > 0) {
+        printf("A woman comes up to you and tells you she can't reach her family and asks you to go check it out.\n");
+
+        printf("1: Go check it out\n");
+        printf("2: Proceed with your mission\n");
+
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            printf("You decide to help the woman and go check it out.\n");
+            player->chapter++;
+            saveGame(player, "savegame.txt");
+            chapter4(player);
+        } else {
+            printf("You decide to proceed with your mission.\n");
+            player->chapter+=2;
+            saveGame(player, "savegame.txt");
+            chapter5(player);
+        }
+    }
 }
+
 
 void chapter4(Player *player) {
 
