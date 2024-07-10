@@ -126,7 +126,7 @@ void chapter2(Player *player) {
     if (choice == 1) {
         printf("Correct! The scroll glows and a spell to banish the dragon appears. You gain 10 XP and a spell to banish the dragon.\n");
         player->xp += 10;
-        printf("You used the spell and the dragon vanished.");
+        printf("You used the spell and the dragon vanished.\n");
     } else {
         printf("Incorrect! The dragon roars and attacks. You must fight the dragon.\n");
         if (duel(player)) {
@@ -202,7 +202,7 @@ void chapter3(Player *player) {
         printf("Incorrect! Nothing happens.\n");
     }
 
-    printf("Suddenly, a duel ensues."); // fix this so it describes the dragon
+    printf("Suddenly, a thunderous growl rumbles through the air, causing the ground beneath you to shudder. You turn to see an enormous dragon, its scales shimmering like diamonds against the snow, perched atop a nearby mountain.\n");
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -225,6 +225,7 @@ void chapter3(Player *player) {
         if (player->heal_potion > 0) {
             printf("You use a healing potion and recover your HP.\n");
             player->heal_potion--;
+            player->hp = 100;
         } else if (player->partner == 1) {
             printf("Your partner Lyla gives you her potion and you are saved.\n");
             player->hp += 10;
@@ -276,7 +277,7 @@ void chapter4(Player *player) {
         printf("Incorrect! Nothing happens.\n");
     }
 
-    printf("A duel ensues with a dragon. After the duel, you notice a burning building on the verge of collapsing.\n"); // fix this "you encounter the dragon blah blah"
+    printf(" a piercing screech slices through the air, sending a jolt of fear down your spine. You turn to see a colossal dragon, its scales a vibrant green that blends seamlessly with the foliage, looming over the trees.\n");
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -285,7 +286,7 @@ void chapter4(Player *player) {
         printf("You were defeated by the dragon. Game over.\n");
         return;
     }
-
+    printf("After the vicious battle, you notice a burning building on the verge of collapsing.\n");
     printf("Do you go into the building? There might be someone there. Are you willing to risk your life?\n");
     printf("1: Yes\n");
     printf("2: No\n");
@@ -378,27 +379,28 @@ void chapter5(Player *player) {
 }
 
 int duel(Player *player) {
-    int dragon_hp = 100;
-    int round_damage;
+    srand(time(NULL)); 
+
+    int dragon_hp = 100 + (player->chapter - 1) * 25; 
+
     while (dragon_hp > 0 && player->hp > 0) {
-        int player_choice;
-        printf("Choose your attack power (1-12): ");
-        scanf("%d", &player_choice); // player inputs a number from 1-12
-        round_damage = (player_choice / player->chapter ) * 2; // divide by chapter and multiply by 2
-        round_damage += rand() % 10 - 5; // add a random number between -5 and 5
-        round_damage += player->xp / 10; // add a value influenced by the player's xp
-        dragon_hp -= round_damage;
-        printf("You deal %d damage to the dragon. It has %d HP left.\n", round_damage, dragon_hp);
-        if (dragon_hp > 0) {
-            round_damage = rand() % (player->chapter * 10);
-            player->hp -= round_damage;
-            printf("The dragon deals %d damage to you. You have %d HP left.\n", round_damage, player->hp);
-        }
+        int attack_bonus = (player->armor + player->weapon) * 2;
+        int player_attack = (rand() % 10 + 1) + attack_bonus + player->xp / 10;
+        dragon_hp -= player_attack;
+        printf("You deal %d damage. Dragon HP: %d\n", player_attack, dragon_hp);
+
+        if (dragon_hp <= 0) break;
+
+        int dragon_attack = (rand() % 8 + 3) + player->chapter * 2;
+        player->hp -= dragon_attack;
+        printf("Dragon deals %d damage. Player HP: %d\n", dragon_attack, player->hp);
     }
+
     if (player->hp > 0) {
         return 1;
-    } 
-    return 0;
+    } else {
+        return 0;
+    }
 }
 
 void saveGame(Player *player, const char *filepath) {
