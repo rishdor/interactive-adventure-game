@@ -193,7 +193,9 @@ void chapter2(Player *player) {
     }
 
     printf("As you continue your journey, you encounter a short grumpy man who tells you a legend about the Emberlord.\n");
-    printf("During his story, you hear a noise. It's probably a piece of ruined building that fell.\n");
+    printf("'In the annals of our city, there exists an old tale,' he begins, his voice raspy with age. 'It speaks of a time when dragons lived in harmony with us. But as the game of life progressed, a mysterious force began to stir them up.'\n");
+    printf("'This force,' he continues, 'is known only as the Lord of Embers. A creature of myth, a dragon of legend, said to have lived for centuries hidden in the volcanic mountains surrounding Pyroklas. To defeat it, they say you have to...'\n");
+    printf("Suddenly you hear a faint noise. It's probably a piece of ruined building that fell but you never know right?.\n");
     printf("1: Follow the noise\n");
     printf("2: Stay and listen to the rest of the story\n");
 
@@ -207,7 +209,7 @@ void chapter2(Player *player) {
         printf("You follow the noise and find an old woman trapped under some rubble. You manage to save her and as a thank you she gives you a healing potion.\n");
         player->heal_potion++;
     } else {
-        printf("You decide to stay and listen to the rest of the story. Unfortunately, there was nothing important left to hear.\n");
+        printf("You decide to stay and listen to the rest of the story. Unfortunately, there was nothing important left to hear. Old man was rambling about the red mood and withes. You thanked him for the information.\n");
     }
 
     printf("Your journey continues...\n");
@@ -219,7 +221,7 @@ void chapter2(Player *player) {
 }
 
 void chapter3(Player *player) {
-    printf("The team member you didn't choose to pair up with decides to check something out, leaving you with %s.\n", player->partner == 1 ? "Magnus" : "Lyla");
+    printf("%s separates from you and %s. They decided to check something out, at the other end of the city.\n", player->partner == 1 ? "Magnus" : "Lyla",  player->partner == 2 ? "Magnus" : "Lyla");
 
     printf("On the ground, you find another scroll with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?'\n");
 
@@ -228,7 +230,7 @@ void chapter3(Player *player) {
 
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
     }
 
@@ -239,7 +241,7 @@ void chapter3(Player *player) {
         printf("Incorrect! Nothing happens.\n");
     }
 
-    printf("Suddenly, a thunderous growl rumbles through the air, causing the ground beneath you to shudder. You turn to see an enormous dragon, its scales shimmering like diamonds against the snow, perched atop a nearby mountain.\n");
+    printf("Suddenly, a thunderous growl rumbles through the air, causing the ground beneath you to shudder. You turn to see an enormous dragon, its scales shimmering like diamonds.\n");
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -256,7 +258,7 @@ void chapter3(Player *player) {
     printf("2: No\n");
 
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
     }
 
@@ -284,7 +286,7 @@ void chapter3(Player *player) {
         printf("2: Proceed with your mission\n");
     
         while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-            while (getchar() != '\n'); // Clear the input buffer
+            while (getchar() != '\n');
             printf("Invalid choice, please select 1 or 2:\n");
         }
     
@@ -312,7 +314,7 @@ void chapter4(Player *player) {
 
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
     }
 
@@ -323,7 +325,7 @@ void chapter4(Player *player) {
         printf("Incorrect! Nothing happens.\n");
     }
 
-    printf(" a piercing screech slices through the air, sending a jolt of fear down your spine. You turn to see a colossal dragon, its scales a vibrant green that blends seamlessly with the foliage, looming over the trees.\n");
+    printf("A piercing screech slices through the air, sending a jolt of fear down your spine. You turn to see a colossal dragon, its scales a vibrant green that blends seamlessly with the foliage, looming over the trees.\n");
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -338,19 +340,23 @@ void chapter4(Player *player) {
     printf("2: No\n");
 
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
     }
 
     if (choice == 1) {
-        // randomize this later (50% chance of dying)
-        printf("You decide to risk it and go into the building. You manage to save a puppy just in time. A freckled ginger boy comes up to you and recites a poem:\n");
-        printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
-        printf("A hero emerges, their praises we sing.\n");
-        printf("With courage in their heart and a spear in their hand,\n");
-        printf("They strike at the beast, making their stand.\n");
-        printf("The spear finds its mark, the dragon's reign ends,\n");
-        printf("In the heart of the fire, a new era begins.\n```\n");
+        if (rand() % 4 != 0 ) { 
+            printf("You decide to risk it and go into the building. You manage to save a puppy just in time. It's owner (freckled ginger boy) comes up to you and recites a poem:\n");
+            printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
+            printf("A hero emerges, their praises we sing.\n");
+            printf("With courage in their heart and a spear in their hand,\n");
+            printf("They strike at the beast, making their stand.\n");
+            printf("The spear finds its mark, the dragon's reign ends,\n");
+            printf("In the heart of the fire, a new era begins.\n```\n");
+        } else {
+            printf("You decide to risk it and go into the building, but unfortunately, it collapses before you can exit. You did not survive. Game over.\n");
+            return;
+        }
     } else {
         printf("You decide not to risk it and stay away from the building.\n");
     }
@@ -373,7 +379,7 @@ void chapter5(Player *player) {
 
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n'); 
         printf("Invalid choice, please select 1, 2, or 3:\n");
     }
     player->weapon = choice;
@@ -384,7 +390,7 @@ void chapter5(Player *player) {
     printf("3: Shadow Cloak\n");
 
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n'); 
         printf("Invalid choice, please select 1, 2, or 3:\n");
     }
     player->armor = choice;
@@ -421,7 +427,7 @@ void chapter5(Player *player) {
     
         int choice;
         while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
-            while (getchar() != '\n'); // Clear the input buffer
+            while (getchar() != '\n'); 
             printf("Invalid choice, please select 1 or 2:\n");
         }
     
