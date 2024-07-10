@@ -29,20 +29,31 @@ int duel(Player *player);
 int main() {
     Player player;
 
-    printf("Load game from file or start new game?\n 1: load \n2: start new game)\n");
+    printf("Load game from file or start new game?\n1: load\n2: start new game\n");
 
     int choice;
-    scanf("%d", &choice);
+    if (scanf("%d", &choice) != 1) {
+        while (getchar() != '\n');
+        printf("Invalid input. Starting new game by default.\n");
+        start(&player);
+        return 0;
+    }
 
     if (choice == 1) {
-        printf("filepath: \n");
+        printf("Filepath: \n");
         char path[200];
-        scanf("%s", path);
-        loadGame(path, &player);
+        scanf("%*c");
+        if (fgets(path, sizeof(path), stdin) != NULL) {
+            path[strcspn(path, "\n")] = 0;
+            loadGame(path, &player);
+        } else {
+            printf("Error reading filepath. Starting new game...\n");
+            start(&player);
+        }
     } else if (choice == 2) {
         start(&player);
     } else {
-        printf("You picked the wrong opiton.\nStarting new game.....\n");
+        printf("You picked the wrong option.\nStarting new game...\n");
         start(&player);
     }
     return 0;
@@ -68,7 +79,6 @@ void chapter1(Player *player) {
     printf("Your new teammates are Lyla and Magnus. Lyla is a seasoned dragon hunter, smart and agile. Magnus is strong and ambitious but a bit self-absorbed.\n");
 
     printf("What's your name?\n");
-    fflush(stdin);
     fgets(player->name, 50, stdin);
     player->name[strcspn(player->name, "\n")] = '\0';
 
@@ -78,7 +88,10 @@ void chapter1(Player *player) {
     printf("2: Actually, no. I just finished my training.\n");
 
     int choice;
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n');
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
         printf("Magnus: 'The Order of the Flame, huh? Impressive.'\n");
@@ -97,7 +110,10 @@ void chapter1(Player *player) {
     printf("1: Pair up with Lyla\n");
     printf("2: Pair up with Magnus\n");
 
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n');
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
     player->partner = choice == 1 ? 1 : 2;
 
     printf("Good choice! Congratulations on joining the team!\nSuddenly, alarms blare - a dragon is attacking a nearby neighborhood. The team departs the HQ. The adventure starts now. \n");
@@ -121,7 +137,14 @@ void chapter2(Player *player) {
     printf("2: The wind\n");
 
     int choice;
-    scanf("%d", &choice);
+    do {
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+        } else if (choice < 1 || choice > 2) {
+            printf("Choice must be 1 or 2.\n");
+        }
+    } while (choice < 1 || choice > 2);
 
     if (choice == 1) {
         printf("Correct! The scroll glows and a spell to banish the dragon appears. You gain 10 XP and a spell to banish the dragon.\n");
@@ -142,7 +165,14 @@ void chapter2(Player *player) {
     printf("1: Yes\n");
     printf("2: No\n");
 
-    scanf("%d", &choice);
+    do {
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+        } else if (choice < 1 || choice > 2) {
+            printf("Choice must be 1 or 2.\n");
+        }
+    } while (choice < 1 || choice > 2);
 
     if (choice == 1) {
         int randomOutcome = rand() % 3;
@@ -162,15 +192,19 @@ void chapter2(Player *player) {
         }
     }
 
-    printf("As you continue your journey, you encounter a short grumpy man who tells you a legend about the Emberlord.\n"); // TODO: think of the legend
+    printf("As you continue your journey, you encounter a short grumpy man who tells you a legend about the Emberlord.\n");
     printf("During his story, you hear a noise. It's probably a piece of ruined building that fell.\n");
     printf("1: Follow the noise\n");
     printf("2: Stay and listen to the rest of the story\n");
 
-    scanf("%d", &choice);
+    int choice;
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n');
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
-        printf("You follow the noise and find a old woman trapped under some rubble. You manage to save her and as a thank you she gives you a healing potion.\n");
+        printf("You follow the noise and find an old woman trapped under some rubble. You manage to save her and as a thank you she gives you a healing potion.\n");
         player->heal_potion++;
     } else {
         printf("You decide to stay and listen to the rest of the story. Unfortunately, there was nothing important left to hear.\n");
@@ -185,7 +219,7 @@ void chapter2(Player *player) {
 }
 
 void chapter3(Player *player) {
-    printf("The team member you didn't choose to pair up with decides to check something out, leaving you with your partner.\n"); // fix this so it uses names
+    printf("The team member you didn't choose to pair up with decides to check something out, leaving you with %s.\n", player->partner == 1 ? "Magnus" : "Lyla");
 
     printf("On the ground, you find another scroll with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?'\n");
 
@@ -193,11 +227,14 @@ void chapter3(Player *player) {
     printf("2: A shadow\n");
 
     int choice;
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
         printf("Correct! The scroll glows and you gain 20 XP.\n");
-        player->xp += 10;
+        player->xp += 20;
     } else {
         printf("Incorrect! Nothing happens.\n");
     }
@@ -218,7 +255,10 @@ void chapter3(Player *player) {
     printf("1: Yes\n");
     printf("2: No\n");
 
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
         printf("You picked up the object, but it's cursed! You start rapidly losing HP.\n");
@@ -228,7 +268,7 @@ void chapter3(Player *player) {
             player->hp = 100;
         } else if (player->partner == 1) {
             printf("Your partner Lyla gives you her potion and you are saved.\n");
-            player->hp += 10;
+            player->hp = 100;
         } else {
             printf("Your partner Magnus betrays you and runs away. You die. Game over.\n");
             return;
@@ -239,12 +279,15 @@ void chapter3(Player *player) {
 
     if (player->hp > 0) {
         printf("A woman comes up to you and tells you she can't reach her family and asks you to go check it out.\n");
-
+    
         printf("1: Go check it out\n");
         printf("2: Proceed with your mission\n");
-
-        scanf("%d", &choice);
-
+    
+        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+            while (getchar() != '\n'); // Clear the input buffer
+            printf("Invalid choice, please select 1 or 2:\n");
+        }
+    
         if (choice == 1) {
             printf("You decide to help the woman and go check it out.\n");
             player->chapter++;
@@ -260,7 +303,7 @@ void chapter3(Player *player) {
 }
 
 void chapter4(Player *player) {
-    printf("You reunite with your third team member. The three of you stand together, ready to face whatever comes next.\n"); // TODO: add the name
+    printf("You reunite with your third team member. The three of you stand together, ready to face whatever comes next.\n");
 
     printf("On the ground, you find another scroll with a riddle: 'I am taken from a mine, and shut up in a wooden case, from which I am never released, and yet I am used by almost every person. What am I?'\n");
 
@@ -268,7 +311,10 @@ void chapter4(Player *player) {
     printf("2: A diamond\n");
 
     int choice;
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
         printf("Correct! The scroll glows and you gain 10 XP. It also reveals a piece of information about the Emberlord: 'The Emberlord's scales are impenetrable, save for one weak spot right beneath its left wing.'\n");
@@ -291,7 +337,10 @@ void chapter4(Player *player) {
     printf("1: Yes\n");
     printf("2: No\n");
 
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1 or 2:\n");
+    }
 
     if (choice == 1) {
         // randomize this later (50% chance of dying)
@@ -323,21 +372,27 @@ void chapter5(Player *player) {
     printf("3: Spear\n");
 
     int choice;
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1, 2, or 3:\n");
+    }
     player->weapon = choice;
 
     printf("You also have to choose your armor:\n");
     printf("1: Dragon Scale Armor\n");
-    printf("2: Iron Plate Armor \n");
+    printf("2: Iron Plate Armor\n");
     printf("3: Shadow Cloak\n");
 
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
+        while (getchar() != '\n'); // Clear the input buffer
+        printf("Invalid choice, please select 1, 2, or 3:\n");
+    }
     player->armor = choice;
 
     printf("With your chosen weapon and armor, you and your team ascend the volcano and confront the Emberlord. The battle begins.\n");
 
     if (duel(player)) {
-        printf("You defeated the dragon! You gain 20 XP. \n");
+        printf("You defeated the dragon! You gain 20 XP.\n");
         player->xp += 20;
     } else {
         printf("You were defeated by the dragon. Game over.\n");
@@ -346,7 +401,7 @@ void chapter5(Player *player) {
 
     printf("During the battle, you get badly injured.\n");
     if (player->heal_potion > 0) {
-        printf("It appears you have a spear healing potion. You use it and recover your HP.\n");
+        printf("It appears you have a healing potion. You use it and recover your HP.\n");
         player->hp += 10;
         player->heal_potion--;
     } else if (player->partner == 1) {
@@ -356,18 +411,22 @@ void chapter5(Player *player) {
         printf("Your partner Magnus convinces Lyla that they can't save you and they need to head back to the HQ and regroup. You die. Game over.\n");
         return;
     }
-
+    
     if (player->hp > 0) {
         printf("You find yourself face to face with the giant dragon. You feel its breath on your face, and the heat from its body. You stare into its eyes and notice something. You get a weird lump in your stomach but there is no explanation for it.\n");
-
-        printf("You reach your hand out and touch the dragons face.\n");
+    
+        printf("You reach your hand out and touch the dragon's face.\n");
         printf("1: Stab the dragon\n");
         printf("2: Don't stab the dragon\n");
-
-        scanf("%d", &choice);
-
+    
+        int choice;
+        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
+            while (getchar() != '\n'); // Clear the input buffer
+            printf("Invalid choice, please select 1 or 2:\n");
+        }
+    
         if (choice == 1) {
-            printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl under yuour gentel touch. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
+            printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl under your gentle touch. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
         } else {
             printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way.\n");
             printf("You save the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n");
