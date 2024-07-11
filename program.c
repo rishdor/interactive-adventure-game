@@ -79,6 +79,7 @@ void chapter1(Player *player) {
     printf("Your new teammates are Lyla and Magnus. Lyla is a seasoned dragon hunter, smart and agile. Magnus is strong and ambitious but a bit self-absorbed.\n");
 
     printf("What's your name?\n");
+    fflush(stdin);
     fgets(player->name, 50, stdin);
     player->name[strcspn(player->name, "\n")] = '\0';
 
@@ -199,7 +200,6 @@ void chapter2(Player *player) {
     printf("1: Follow the noise\n");
     printf("2: Stay and listen to the rest of the story\n");
 
-    int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
         while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
@@ -431,7 +431,7 @@ void chapter5(Player *player) {
             printf("Invalid choice, please select 1 or 2:\n");
         }
     
-        if (choice == 1) {
+        if (choice == 2) {
             printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl under your gentle touch. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
         } else {
             printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way.\n");
@@ -444,19 +444,18 @@ void chapter5(Player *player) {
 }
 
 int duel(Player *player) {
-    srand(time(NULL)); 
 
     int dragon_hp = 100 + (player->chapter - 1) * 25; 
 
     while (dragon_hp > 0 && player->hp > 0) {
         int attack_bonus = (player->armor + player->weapon) * 2;
-        int player_attack = (rand() % 10 + 1) + attack_bonus + player->xp / 10;
+        int player_attack = (rand() % 11 + 10) + player->chapter * 3 + player->xp / 10 + attack_bonus;
         dragon_hp -= player_attack;
         printf("You deal %d damage. Dragon HP: %d\n", player_attack, dragon_hp);
 
         if (dragon_hp <= 0) break;
 
-        int dragon_attack = (rand() % 8 + 3) + player->chapter * 2;
+        int dragon_attack = (rand() % 3 + 3);
         player->hp -= dragon_attack;
         printf("Dragon deals %d damage. Player HP: %d\n", dragon_attack, player->hp);
     }
