@@ -26,6 +26,7 @@ void chapter5(Player *player);
 void loadGame(const char *filepath, Player *player);
 void saveGame(Player *player, const char *filepath);
 int duel(Player *player);
+void waitForEnter();
 
 int main() {
     Player player;
@@ -76,8 +77,10 @@ void start(Player *player){
 
 void chapter1(Player *player) {
     printf("Welcome to Pyroklas, a city under siege by rogue dragons. As the newest member of the Wing of Fire Squad, it's your job to help protect the city.\n");
+    waitForEnter();
 
     printf("Your new teammates are Lyla and Magnus. Lyla is a seasoned dragon hunter, smart and agile. Magnus is strong and ambitious but a bit self-absorbed.\n");
+    waitForEnter();
 
     printf("What's your name?\n");
     fflush(stdin);
@@ -88,7 +91,7 @@ void chapter1(Player *player) {
 
     printf("1: I arrived from Flanor where I was a member of the Order of the Flame.\n");
     printf("2: Actually, no. I just finished my training.\n");
-
+  
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
         while (getchar() != '\n');
@@ -106,6 +109,7 @@ void chapter1(Player *player) {
     }
 
     printf("You gained %d XP. Your total XP is now %d.\n", choice == 1 ? 20 : 5, player->xp);
+    waitForEnter();
 
     printf("After some conversation about Magnus and Lyla's previous experiences with dragons, they ask you to make a decision on who you want to be paired up with.\n");
 
@@ -119,19 +123,23 @@ void chapter1(Player *player) {
     player->partner = choice == 1 ? 1 : 2;
 
     printf("Good choice! Congratulations on joining the team!\nSuddenly, alarms blare - a dragon is attacking a nearby neighborhood. The team departs the HQ. The adventure starts now. \n");
+    waitForEnter();
 
     player->chapter++;
     saveGame(player, "savegame.txt");
 
-    chapter2(player);   
+    chapter2(player);  
 }
 
 void chapter2(Player *player) {
     printf("As you and your team approach the endangered neighborhoods of Pyroklas, the air grows thick with smoke. The once vibrant streets are now deserted, save for the flickering shadows cast by the raging fires.\n");
+    waitForEnter();
 
     printf("Suddenly, a deafening roar echoes through the air, sending a chill down your spine. You turn to see a massive dragon, its scales glistening in the firelight, looming over the city. Its eyes, glowing with an eerie light, meet yours, and for a moment, time seems to stand still.\n");
+    waitForEnter();
 
     printf("Lyla grips her bow tightly, her eyes never leaving the dragon. Magnus, despite his earlier bravado, seems taken aback by the sight of the beast.\n");
+    waitForEnter();
 
     printf("On the ground, you find a scroll with a riddle: 'I fly without wings, I cry without eyes. Wherever I go, darkness follows me. What am I?'\n");
 
@@ -177,26 +185,28 @@ void chapter2(Player *player) {
     } while (choice < 1 || choice > 2);
 
     if (choice == 1) {
-        int randomOutcome = rand() % 3;
-
-        switch (randomOutcome) {
-            case 0:
-                printf("You picked up the healing potion.\n");
-                player->heal_potion++;
-                break;
-            case 1:
-                printf("Oh no! It's poison. (-10 hp)\n");
-                player->hp -= 10;
-                break;
-            case 2:
-                printf("It's just water. No effect.\n");
-                break;
+        int randomOutcome = rand() % 10; // Generate a number between 0 and 9
+        
+        if (randomOutcome < 4) { // 0, 1, 2, 3 for healing potion (40%)
+            printf("You picked up the healing potion.\n");
+            player->heal_potion++;
+        } else if (randomOutcome < 8) { // 4, 5, 6, 7 for poison (40%)
+            printf("Oh no! It's poison. (-10 hp)\n");
+            player->hp -= 10;
+        } else { // 8, 9 for water (20%)
+            printf("It's just water. No effect.\n");
         }
     }
 
     printf("As you continue your journey, you encounter a short grumpy man who tells you a legend about the Emberlord.\n");
+    waitForEnter();
+
     printf("'In the annals of our city, there exists an old tale,' he begins, his voice raspy with age. 'It speaks of a time when dragons lived in harmony with us. But as the game of life progressed, a mysterious force began to stir them up.'\n");
+    waitForEnter();
+
     printf("'This force,' he continues, 'is known only as the Lord of Embers. A creature of myth, a dragon of legend, said to have lived for centuries hidden in the volcanic mountains surrounding Pyroklas. To defeat it, they say you have to...'\n");
+    waitForEnter();
+
     printf("Suddenly you hear a faint noise. It's probably a piece of ruined building that fell but you never know right?.\n");
     printf("1: Follow the noise\n");
     printf("2: Stay and listen to the rest of the story\n");
@@ -223,6 +233,7 @@ void chapter2(Player *player) {
 
 void chapter3(Player *player) {
     printf("%s separates from you and %s. They decided to check something out, at the other end of the city.\n", player->partner == 1 ? "Magnus" : "Lyla",  player->partner == 2 ? "Magnus" : "Lyla");
+    waitForEnter();
 
     printf("On the ground, you find another scroll with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?'\n");
 
@@ -307,6 +318,7 @@ void chapter3(Player *player) {
 
 void chapter4(Player *player) {
     printf("You reunite with your third team member. The three of you stand together, ready to face whatever comes next.\n");
+    waitForEnter();
 
     printf("On the ground, you find another scroll with a riddle: 'I am taken from a mine, and shut up in a wooden case, from which I am never released, and yet I am used by almost every person. What am I?'\n");
 
@@ -327,6 +339,7 @@ void chapter4(Player *player) {
     }
 
     printf("A piercing screech slices through the air, sending a jolt of fear down your spine. You turn to see a colossal dragon, its scales a vibrant green that blends seamlessly with the foliage, looming over the trees.\n");
+    waitForEnter();
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -348,12 +361,19 @@ void chapter4(Player *player) {
     if (choice == 1) {
         if (rand() % 4 != 0 ) { 
             printf("You decide to risk it and go into the building. You manage to save a puppy just in time. It's owner (freckled ginger boy) comes up to you and recites a poem:\n");
+            waitForEnter();
             printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
+            waitForEnter();
             printf("A hero emerges, their praises we sing.\n");
+            waitForEnter();
             printf("With courage in their heart and a spear in their hand,\n");
+            waitForEnter();
             printf("They strike at the beast, making their stand.\n");
+            waitForEnter();
             printf("The spear finds its mark, the dragon's reign ends,\n");
+            waitForEnter();
             printf("In the heart of the fire, a new era begins.\n```\n");
+            waitForEnter();
         } else {
             printf("You decide to risk it and go into the building, but unfortunately, it collapses before you can exit. You did not survive. Game over.\n");
             return;
@@ -421,7 +441,8 @@ void chapter5(Player *player) {
     
     if (player->hp > 0) {
         printf("You find yourself face to face with the giant dragon. You feel its breath on your face, and the heat from its body. You stare into its eyes and notice something. You get a weird lump in your stomach but there is no explanation for it.\n");
-    
+        waitForEnter();
+
         printf("You reach your hand out and touch the dragon's face.\n");
         printf("1: Stab the dragon\n");
         printf("2: Don't stab the dragon\n");
@@ -436,7 +457,8 @@ void chapter5(Player *player) {
             printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl under your gentle touch. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
         } else {
             printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way.\n");
-            printf("You save the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n");
+            waitForEnter();
+            printf("You saved the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n");
         }
     }
 
@@ -470,6 +492,12 @@ int duel(Player *player) {
     } else {
         return 0;
     }
+}
+
+void waitForEnter() {
+    printf("(next)\n");
+    while (getchar() != '\n');
+    getchar();
 }
 
 void saveGame(Player *player, const char *filepath) {
