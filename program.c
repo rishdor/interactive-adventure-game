@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h> 
 
 typedef struct {
     char name[50];
@@ -446,8 +447,12 @@ void chapter5(Player *player) {
 int duel(Player *player) {
 
     int dragon_hp = 100 + (player->chapter - 1) * 25; 
+    
+    printf("You are in a battle with the dragon. It has %d HP.\n", dragon_hp);
 
     while (dragon_hp > 0 && player->hp > 0) {
+        Sleep(2000);
+
         int attack_bonus = (player->armor + player->weapon) * 2;
         int player_attack = (rand() % 11 + 10) + player->chapter * 3 + player->xp / 10 + attack_bonus;
         dragon_hp -= player_attack;
