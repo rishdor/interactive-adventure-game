@@ -11,8 +11,6 @@ typedef struct {
     int weapon;
     int armor;
     int heal_potion;
-    // int attack_potion;
-    // int heal_spell;
     int chapter;
 } Player;
 
@@ -28,6 +26,16 @@ void saveGame(Player *player, const char *filepath);
 int duel(Player *player);
 void waitForEnter();
 
+/**
+ * @brief the main function of the program.
+ * 
+ * this function is the entry point of the program. tt prompts the user to choose between loading a game from a file or starting a new game. 
+ * if the user chooses to load a game, it prompts the user to enter the filepath and then calls the loadGame function to load the game from the specified file.
+ * if the user chooses to start a new game, it calls the start function to initialize a new game.
+ * if the user enters an invalid choice, it displays an error message and starts a new game by default.
+ * 
+ * @return 0 indicating successful execution of the program.
+ */
 int main() {
     Player player;
 
@@ -69,19 +77,20 @@ void start(Player *player){
     player->weapon = 0;
     player->armor = 0;
     player->heal_potion = 0;
-    // player->attack_potion = 0;
     player->chapter = 0;
 
     chapter1(player);
 }
 
 void chapter1(Player *player) {
+    // introductory storyline
     printf("Welcome to Pyroklas, a city under siege by rogue dragons. As the newest member of the Wing of Fire Squad, it's your job to help protect the city.\n");
     waitForEnter();
 
     printf("Your new teammates are Lyla and Magnus. Lyla is a seasoned dragon hunter, smart and agile. Magnus is strong and ambitious but a bit self-absorbed.\n");
     waitForEnter();
 
+    // prompt player for their name
     printf("What's your name?\n");
     fflush(stdin);
     fgets(player->name, 50, stdin);
@@ -98,6 +107,7 @@ void chapter1(Player *player) {
         printf("Invalid choice, please select 1 or 2:\n");
     }
 
+    // handle player's choice and update XP
     if (choice == 1) {
         printf("Magnus: 'The Order of the Flame, huh? Impressive.'\n");
         printf("Lyla: 'Glad to have someone experienced on board.'\n");
@@ -111,6 +121,7 @@ void chapter1(Player *player) {
     printf("You gained %d XP. Your total XP is now %d.\n", choice == 1 ? 20 : 5, player->xp);
     waitForEnter();
 
+    // prompt player to choose a teammate which is very relevant to the plot
     printf("After some conversation about Magnus and Lyla's previous experiences with dragons, they ask you to make a decision on who you want to be paired up with.\n");
 
     printf("1: Pair up with Lyla\n");
@@ -125,9 +136,11 @@ void chapter1(Player *player) {
     printf("Good choice! Congratulations on joining the team!\nSuddenly, alarms blare - a dragon is attacking a nearby neighborhood. The team departs the HQ. The adventure starts now. \n");
     waitForEnter();
 
+    // update player's progress and save the game
     player->chapter++;
     saveGame(player, "savegame.txt");
 
+    // proceed to Chapter 2
     chapter2(player);  
 }
 
@@ -141,12 +154,14 @@ void chapter2(Player *player) {
     printf("Lyla grips her bow tightly, her eyes never leaving the dragon. Magnus, despite his earlier bravado, seems taken aback by the sight of the beast.\n");
     waitForEnter();
 
+    // a riddle
     printf("On the ground, you find a scroll with a riddle: 'I fly without wings, I cry without eyes. Wherever I go, darkness follows me. What am I?'\n");
 
     printf("1: A cloud\n");
     printf("2: The wind\n");
 
     int choice;
+    // input validation
     do {
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a number.\n");
@@ -184,6 +199,7 @@ void chapter2(Player *player) {
         }
     } while (choice < 1 || choice > 2);
 
+    // picking a randomized item
     if (choice == 1) {
         int randomOutcome = rand() % 10; // Generate a number between 0 and 9
         
@@ -232,7 +248,7 @@ void chapter2(Player *player) {
 }
 
 void chapter3(Player *player) {
-    printf("%s separates from you and %s. They decided to check something out, at the other end of the city.\n", player->partner == 1 ? "Magnus" : "Lyla",  player->partner == 2 ? "Magnus" : "Lyla");
+    printf("%s decided to check something out, at the other end of the city and separates from you and %s.\n", player->partner == 1 ? "Magnus" : "Lyla",  player->partner == 2 ? "Magnus" : "Lyla");
     waitForEnter();
 
     printf("On the ground, you find another scroll with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?'\n");
@@ -284,7 +300,7 @@ void chapter3(Player *player) {
             printf("Your partner Lyla gives you her potion and you are saved.\n");
             player->hp = 100;
         } else {
-            printf("Your partner Magnus betrays you and runs away. You die. Game over.\n");
+            printf("Your partner Magnus betrays you and runs away. You die. Game over.\n"); // first real ending [based on choices] (dying in the duel is just lame so it doesnt count)
             return;
         }
     } else {
@@ -317,6 +333,7 @@ void chapter3(Player *player) {
 }
 
 void chapter4(Player *player) {
+    // chapter that can be skipped depending on the last decision but it has some important clues about the final battle so i dont recommend skipping it
     printf("You reunite with your third team member. The three of you stand together, ready to face whatever comes next.\n");
     waitForEnter();
 
@@ -350,7 +367,7 @@ void chapter4(Player *player) {
     }
     printf("After the vicious battle, you notice a burning building on the verge of collapsing.\n");
     printf("Do you go into the building? There might be someone there. Are you willing to risk your life?\n");
-    printf("1: Yes\n");
+    printf("1: Yes\n"); // this choice has 25% of dying and 75% clue which weapon to choose to defeat the boss
     printf("2: No\n");
 
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
@@ -362,6 +379,7 @@ void chapter4(Player *player) {
         if (rand() % 4 != 0 ) { 
             printf("You decide to risk it and go into the building. You manage to save a puppy just in time. It's owner (freckled ginger boy) comes up to you and recites a poem:\n");
             waitForEnter();
+            // a poem generated by Bing Copilot (some of the dialogues and narrator entries are written by me but fixed by Bing)
             printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
             waitForEnter();
             printf("A hero emerges, their praises we sing.\n");
@@ -375,7 +393,7 @@ void chapter4(Player *player) {
             printf("In the heart of the fire, a new era begins.\n```\n");
             waitForEnter();
         } else {
-            printf("You decide to risk it and go into the building, but unfortunately, it collapses before you can exit. You did not survive. Game over.\n");
+            printf("You decide to risk it and go into the building, but unfortunately, it collapses before you can exit. You did not survive. Game over.\n"); // second real ending [almost random death -- just unlucky]
             return;
         }
     } else {
@@ -396,7 +414,7 @@ void chapter5(Player *player) {
     printf("You have to choose your weapon:\n");
     printf("1: Sword\n");
     printf("2: Bow\n");
-    printf("3: Spear\n");
+    printf("3: Spear\n"); // best one [influences damage points in battle]
 
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
@@ -408,7 +426,7 @@ void chapter5(Player *player) {
     printf("You also have to choose your armor:\n");
     printf("1: Dragon Scale Armor\n");
     printf("2: Iron Plate Armor\n");
-    printf("3: Shadow Cloak\n");
+    printf("3: Shadow Cloak\n"); // best one [influences damage points in battle]
 
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 3) {
         while (getchar() != '\n'); 
@@ -422,7 +440,7 @@ void chapter5(Player *player) {
         printf("You defeated the dragon! You gain 20 XP.\n");
         player->xp += 20;
     } else {
-        printf("You were defeated by the dragon. Game over.\n");
+        printf("You were defeated by the dragon. Game over.\n"); // this duel death is the most probable out of all duel deaths
         return;
     }
 
@@ -435,7 +453,7 @@ void chapter5(Player *player) {
         printf("Your partner Lyla gives you her potion and you are saved.\n");
         player->hp += 10;
     } else {
-        printf("Your partner Magnus convinces Lyla that they can't save you and they need to head back to the HQ and regroup. You die. Game over.\n");
+        printf("Your partner Magnus convinces Lyla that they can't save you and they need to head back to the HQ and regroup. You die. Game over.\n"); // third real ending [completely based on decisions]
         return;
     }
     
@@ -458,14 +476,17 @@ void chapter5(Player *player) {
         } else {
             printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way.\n");
             waitForEnter();
-            printf("You saved the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n");
         }
+        
+        printf("You saved the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n"); // 4 and 5 ending aka The Victory
     }
 
     player->chapter++;
     saveGame(player, "savegame.txt");
 }
 
+// there is a lot of room for impovement for this method but this is the best one i managed to do that made winning possible
+// it takes into account the current chapter (level), the xp points gained, the weapon and armor chosen at the last chapter and of course there is a bit of pseudo randomness
 int duel(Player *player) {
 
     int dragon_hp = 100 + (player->chapter - 1) * 25; 
@@ -500,8 +521,10 @@ void waitForEnter() {
     getchar();
 }
 
+// saving the game for later loading, saving is at the end of each chapter
+// if the player hasnt finished the chapter they will start from the beginning of that chapter (mining xp is not possible:))
 void saveGame(Player *player, const char *filepath) {
-    FILE *file = fopen("C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt", "w");
+    FILE *file = fopen(filepath, "w");
     if (file == NULL) {
         printf("err\n");
         return;
@@ -515,21 +538,20 @@ void saveGame(Player *player, const char *filepath) {
     fprintf(file, "weapon: %d\n", player->weapon);
     fprintf(file, "armor: %d\n", player->armor);
     fprintf(file, "heal_potion: %d\n", player->heal_potion);
-    // fprintf(file, "attack_potion: %d\n", player->attack_potion);
-    // fprintf(file, "heal_spell: %d\n", player->heal_spell);
     fprintf(file, "chapter: %d\n", player->chapter);
 
     fclose(file);
 }
 
 void loadGame(const char *filepath, Player *player) {
-    FILE *file = fopen("C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt", "r");
+    FILE *file = fopen(filepath, "r");
     if (file == NULL) {
         printf("err\n");
         return;
     }
 
     char line[256];
+    // checking if the header matches --> checking if the file is actualy a saved game or a random file
     fgets(line, sizeof(line), file);
     if (strcmp(line, "Mission: Save Pyroklas\n") != 0) {
         printf("Invalid game data\n");
@@ -550,10 +572,6 @@ void loadGame(const char *filepath, Player *player) {
     sscanf(line, "armor: %d", &player->armor);
     fgets(line, sizeof(line), file);
     sscanf(line, "heal_potion: %d", &player->heal_potion);
-    // fgets(line, sizeof(line), file);
-    // sscanf(line, "attack_potion: %d", &player->attack_potion);
-    // fgets(line, sizeof(line), file);
-    // sscanf(line, "heal_spell: %d", &player->heal_spell);
     fgets(line, sizeof(line), file);
     sscanf(line, "chapter: %d", &player->chapter);
 
