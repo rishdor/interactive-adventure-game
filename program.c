@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h> 
+#include <windows.h>
+#include <conio.h>
+#include <time.h>
 
 typedef struct {
     char name[50];
@@ -38,6 +40,8 @@ void waitForEnter();
  */
 int main() {
     Player player;
+
+    srand(time(0));
 
     printf("Load game from file or start new game?\n1: load\n2: start new game\n");
 
@@ -118,7 +122,7 @@ void chapter1(Player *player) {
         player->xp += 5;
     }
 
-    printf("You gained %d XP. Your total XP is now %d.\n", choice == 1 ? 20 : 5, player->xp);
+    printf("You gained %d XP.\n", choice == 1 ? 20 : 5);
     waitForEnter();
 
     // prompt player to choose a teammate which is very relevant to the plot
@@ -177,6 +181,7 @@ void chapter2(Player *player) {
         printf("You used the spell and the dragon vanished.\n");
     } else {
         printf("Incorrect! The dragon roars and attacks. You must fight the dragon.\n");
+        waitForEnter();
         if (duel(player)) {
             printf("You defeated the dragon! You gain 20 XP. \n");
             player->xp += 20;
@@ -201,13 +206,13 @@ void chapter2(Player *player) {
 
     // picking a randomized item
     if (choice == 1) {
-        int randomOutcome = rand() % 10; // Generate a number between 0 and 9
+        int randomOutcome = rand() % 10; // generate a number between 0 and 9
         
         if (randomOutcome < 4) { // 0, 1, 2, 3 for healing potion (40%)
             printf("You picked up the healing potion.\n");
             player->heal_potion++;
         } else if (randomOutcome < 8) { // 4, 5, 6, 7 for poison (40%)
-            printf("Oh no! It's poison. (-10 hp)\n");
+            printf("Oh no! It's poison! (-10 hp)\n");
             player->hp -= 10;
         } else { // 8, 9 for water (20%)
             printf("It's just water. No effect.\n");
@@ -217,7 +222,7 @@ void chapter2(Player *player) {
     printf("As you continue your journey, you encounter a short grumpy man who tells you a legend about the Emberlord.\n");
     waitForEnter();
 
-    printf("'In the annals of our city, there exists an old tale,' he begins, his voice raspy with age. 'It speaks of a time when dragons lived in harmony with us. But as the game of life progressed, a mysterious force began to stir them up.'\n");
+    printf("'In our city, there exists an old tale,' he begins, his voice raspy with age. 'It speaks of a time when dragons lived in harmony with us. But as the game of life progressed, a mysterious force began to stir them up.'\n");
     waitForEnter();
 
     printf("'This force,' he continues, 'is known only as the Lord of Embers. A creature of myth, a dragon of legend, said to have lived for centuries hidden in the volcanic mountains surrounding Pyroklas. To defeat it, they say you have to...'\n");
@@ -270,6 +275,7 @@ void chapter3(Player *player) {
     }
 
     printf("Suddenly, a thunderous growl rumbles through the air, causing the ground beneath you to shudder. You turn to see an enormous dragon, its scales shimmering like diamonds.\n");
+    waitForEnter();
 
     if (duel(player)) {
         printf("You defeated the dragon! You gain 20 XP. \n");
@@ -292,19 +298,23 @@ void chapter3(Player *player) {
 
     if (choice == 1) {
         printf("You picked up the object, but it's cursed! You start rapidly losing HP.\n");
+        waitForEnter();
+
         if (player->heal_potion > 0) {
-            printf("You use a healing potion and recover your HP.\n");
+            printf("You used a healing potion and recoved your HP to 100.\n");
             player->heal_potion--;
             player->hp = 100;
         } else if (player->partner == 1) {
             printf("Your partner Lyla gives you her potion and you are saved.\n");
             player->hp = 100;
         } else {
-            printf("Your partner Magnus betrays you and runs away. You die. Game over.\n"); // first real ending [based on choices] (dying in the duel is just lame so it doesnt count)
+            printf("Unfortunately you don't have any healing potions.\n");
+            waitForEnter();
+            printf("You ask your partner Magnus to give you his, but he refuses and walks away. Your journey ends here. Game over.\n"); // first real ending [based on choices] (dying in the duel is just lame so it doesnt count)
             return;
         }
     } else {
-        printf("You didn't pick up the object. It explodes, but luckily you dodge the bullet.\n");
+        printf("You didn't pick up the object. It explodes, but luckily you dodged the bullet.\n");
     }
 
     if (player->hp > 0) {
@@ -354,8 +364,12 @@ void chapter4(Player *player) {
     } else {
         printf("Incorrect! Nothing happens.\n");
     }
+    waitForEnter();
 
     printf("A piercing screech slices through the air, sending a jolt of fear down your spine. You turn to see a colossal dragon, its scales a vibrant green that blends seamlessly with the foliage, looming over the trees.\n");
+    waitForEnter();
+
+    printf("You notice that the dragon starts moving in the direction of a civilians so you jump in front of them to save them.\n");
     waitForEnter();
 
     if (duel(player)) {
@@ -383,13 +397,9 @@ void chapter4(Player *player) {
             printf("\n```\nIn the heart of the battle, under the dragon's wing,\n");
             waitForEnter();
             printf("A hero emerges, their praises we sing.\n");
-            waitForEnter();
             printf("With courage in their heart and a spear in their hand,\n");
-            waitForEnter();
             printf("They strike at the beast, making their stand.\n");
-            waitForEnter();
             printf("The spear finds its mark, the dragon's reign ends,\n");
-            waitForEnter();
             printf("In the heart of the fire, a new era begins.\n```\n");
             waitForEnter();
         } else {
@@ -400,7 +410,7 @@ void chapter4(Player *player) {
         printf("You decide not to risk it and stay away from the building.\n");
     }
 
-    printf("Your journey continues...\n");
+    printf("You saved the civilians and got an important clue. Good job!\nYour journey continues...\n");
 
     player->chapter++;
     saveGame(player, "savegame.txt");
@@ -440,7 +450,7 @@ void chapter5(Player *player) {
         printf("You defeated the dragon! You gain 20 XP.\n");
         player->xp += 20;
     } else {
-        printf("You were defeated by the dragon. Game over.\n"); // this duel death is the most probable out of all duel deaths
+        printf("You were defeated by the dragon. Game over.\n"); // this duels death is the most probable out of all duel deaths
         return;
     }
 
@@ -475,10 +485,11 @@ void chapter5(Player *player) {
             printf("You reach out with your both hand and gently pet the dragon. It transforms into a little girl under your gentle touch. It turns out there is an evil warlock who enchanted her. She was scared and panicked, that's why she caused such havoc. There is a treasure hidden somewhere in the city and the warlock enchanted the girl so she would lead the dragon to burn down the city so he could easily access it. Your next adventure awaits...\n");
         } else {
             printf("You give the dragon a final stab in the heart. The dragon dies with a vicious, human-like cry. You feel a pang of guilt inside, as if you did something wrong and there was another way.\n");
-            waitForEnter();
+ 
         }
-        
-        printf("You saved the city from destruction. You're a Hero. As a thank you, people of Pyroklas reward you.\n"); // 4 and 5 ending aka The Victory
+
+        waitForEnter();
+        printf("You saved the city from the destruction. You're a Hero now. As a thank you, people of Pyroklas reward you.\n"); // 4 and 5 ending aka The Victory
     }
 
     player->chapter++;
@@ -517,8 +528,10 @@ int duel(Player *player) {
 
 void waitForEnter() {
     printf("(next)\n");
-    while (getchar() != '\n');
-    getchar();
+    char c;
+    do {
+        c = getch();
+    } while (c != '\r' && c != ' ');
 }
 
 // saving the game for later loading, saving is at the end of each chapter

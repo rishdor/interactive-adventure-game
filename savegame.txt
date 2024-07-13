@@ -1,9 +1,9 @@
 Mission: Save Pyroklas
 name: Rina
-hp: 84
-xp: 70
-partner: 1
+hp: 90
+xp: 30
+partner: 2
 weapon: 0
 armor: 0
-heal_potion: 1
-chapter: 3
+heal_potion: 0
+chapter: 2
