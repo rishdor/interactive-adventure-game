@@ -16,8 +16,14 @@ typedef struct {
     int chapter;
 } Player;
 
+const char *dialogs_main[1] = {
+"Load game from file or start new game?\n1: load\n2: start new game\n"
+};
+
+const char PATH[] = "C:\\Users\\doros\\alltheshit\\practice\\c\\c uni project\\savegame.txt";
+
 // function prototypes for each chapter
-void start();
+void init(Player *player, int load);
 void chapter1(Player *player);
 void chapter2(Player *player);
 void chapter3(Player *player);
@@ -27,6 +33,10 @@ void loadGame(const char *filepath, Player *player);
 void saveGame(Player *player, const char *filepath);
 int duel(Player *player);
 void waitForEnter();
+
+typedef void(*f)(Player *player);
+
+f func[5] = {&chapter1, &chapter2, &chapter3, &chapter4, &chapter5};
 
 /**
  * @brief the main function of the program.
@@ -43,40 +53,39 @@ int main() {
 
     srand(time(0));
 
-    printf("Load game from file or start new game?\n1: load\n2: start new game\n");
+    printf(dialogs_main[0]);
 
     int choice;
     while (scanf("%d", &choice) != 1 || choice < 1 || choice > 2) {
         while (getchar() != '\n');
         printf("Invalid choice, please select 1 or 2:\n");
     }
-
-    if (choice == 1) {
-        printf("Enter filepath: \n");
-        char path[200];
-        scanf("%*c");
-        if (fgets(path, sizeof(path), stdin) != NULL) {
-            path[strcspn(path, "\n")] = 0;
-            loadGame(path, &player);
+    
+    init(&player, choice);
+    
+    int i;
+    for (i=0; i<5; ++i){
+        if (player.chapter == i){
+            func[i](&player);
         }
-    } else {
-        start(&player);
-    }
+     }
 
     return 0;
 }
 
-void start(Player *player){
-
-    player->hp = 100;
-    player->xp = 0;
-    player->partner = 0;
-    player->weapon = 0;
-    player->armor = 0;
-    player->heal_potion = 0;
-    player->chapter = 0;
-
-    chapter1(player);
+void init(Player *player, int load){
+    if (load == 1){
+        loadGame(PATH, player);     
+    }
+    else {
+        player->hp = 100;
+        player->xp = 0;
+        player->partner = 0;
+        player->weapon = 0;
+        player->armor = 0;
+        player->heal_potion = 0;
+        player->chapter = 0;
+    }
 }
 
 void chapter1(Player *player) {
@@ -135,10 +144,7 @@ void chapter1(Player *player) {
 
     // update player's progress and save the game
     player->chapter++;
-    saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
-
-    // proceed to Chapter 2
-    chapter2(player);  
+    saveGame(player, PATH);
 }
 
 void chapter2(Player *player) {
@@ -240,9 +246,7 @@ void chapter2(Player *player) {
     printf("Your journey continues...\n");
 
     player->chapter++;
-    saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
-
-    chapter3(player);
+    saveGame(player, PATH);
 }
 
 void chapter3(Player *player) {
@@ -324,14 +328,11 @@ void chapter3(Player *player) {
         if (choice == 1) {
             printf("You decide to help the woman and go check it out.\n");
             player->chapter++;
-            saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
-            chapter4(player);
         } else {
             printf("You decide to proceed with your mission.\n");
-            player->chapter+=2;
-            saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
-            chapter5(player);
+            player->chapter = 4;
         }
+        saveGame(player, PATH);
     }
 }
 
@@ -405,9 +406,7 @@ void chapter4(Player *player) {
     printf("You saved the civilians and got an important clue. Good job!\nYour journey continues...\n");
 
     player->chapter++;
-    saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
-
-    chapter5(player);
+    saveGame(player, PATH);
 }
 
 void chapter5(Player *player) {
@@ -485,7 +484,7 @@ void chapter5(Player *player) {
     }
 
     player->chapter++;
-    saveGame(player, "C:/Users/doros/alltheshit/practice/c/c uni project/savegame.txt");
+    saveGame(player, PATH);
 }
 
 // there is a lot of room for impovement for this method but this is the best one i managed to do that made winning possible
@@ -581,27 +580,4 @@ void loadGame(const char *filepath, Player *player) {
     sscanf(line, "chapter: %d", &player->chapter);
 
     fclose(file);
-
-    // start the game at the saved chapter
-    switch (player->chapter) {
-        case 0:
-            chapter1(player);
-            break;
-        case 1:
-            chapter2(player);
-            break;
-        case 2:
-            chapter3(player);
-            break;
-        case 3:
-            chapter4(player);
-            break;
-        case 4:
-            chapter5(player);
-            break;
-        default:
-            printf("invalid chapter number\nStarting the game from the beginning.....");
-            start(player);
-            break;
-    }
 }
